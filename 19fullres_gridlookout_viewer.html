@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Full Resolution GridLookout Viewer</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .controls {
+      margin: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(19, 5px);
+      grid-template-rows: repeat(9, 5px);
+      gap: 0;
+      margin: auto;
+      width: max-content;
+      position: relative;
+    }
+    .cell {
+      width: 5px;
+      height: 5px;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <h2>Full-Resolution Tunnel Scene (All Pulses Rendered)</h2>
+  <div class="controls">
+    Opacity per Layer: <input type="range" min="0.1" max="1" step="0.1" value="1" id="opacityControl">
+    <button onclick="renderGrid()">Render</button>
+  </div>
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const pulses = [{"id": "a2eeca0e-5040-4541-8852-c0d3f47bc028", "name": "microcell-0-0", "row": 1, "col": 1, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(224, 218, 206)"], "stddev": 12.32}, {"id": "663291fc-ce06-4a80-9797-a2471a1deda9", "name": "microcell-0-1", "row": 1, "col": 2, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(228, 223, 212)"], "stddev": 2.5}, {"id": "5478aa14-6f27-4ee5-a0c6-07b04c497ddd", "name": "microcell-0-2", "row": 1, "col": 3, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(227, 223, 212)"], "stddev": 4.78}, {"id": "887f6f23-f5ed-48de-9e0e-3628b0ed5ee1", "name": "microcell-0-3", "row": 1, "col": 4, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(230, 226, 216)"], "stddev": 1.86}, {"id": "de015832-dff6-4cf2-b8e3-e270be1b00e3", "name": "microcell-0-4", "row": 1, "col": 5, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(231, 227, 217)"], "stddev": 1.38}, {"id": "66207386-d3e8-45c8-8b7d-80d5ba6329c4", "name": "microcell-0-5", "row": 1, "col": 6, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(233, 228, 219)"], "stddev": 1.6}, {"id": "85099ed4-8225-4a7b-ae1c-345e51134868", "name": "microcell-0-6", "row": 1, "col": 7, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(232, 227, 217)"], "stddev": 9.88}, {"id": "f0c78854-9d8a-4d7e-8de0-74d8353eb926", "name": "microcell-1-8", "row": 2, "col": 9, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(133, 216, 82)"], "stddev": 19.47}, {"id": "cc5ac4b0-edb8-4fe6-8424-7503adbb0e77", "name": "microcell-1-9", "row": 2, "col": 10, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(139, 223, 86)"], "stddev": 11.44}, {"id": "f45d72bd-d2bc-40fa-a3b2-858c5cac12b6", "name": "microcell-1-10", "row": 2, "col": 11, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(142, 228, 87)"], "stddev": 4.15}, {"id": "6de2b27e-893d-4a40-8053-eaab6c1a0dcb", "name": "microcell-1-11", "row": 2, "col": 12, "width": 1, "height": 1, "layer": 0, "tv": "N", "response": ["color: rgb(138, 224, 87)"], "stddev": 9.6}, {"id": "f63f9d8a-9cc6-4f50-89c3-9d94fbee2759", "name": "microcell-3-3", "row": 4, "col": 4, "width": 1, "height": 1, "layer": 1, "tv": "N", "response": ["color: rgb(225, 230, 218)"], "stddev": 19.44}, {"id": "e008e7be-8ed6-4f86-b03a-d5e486d4b2f2", "name": "microcell-3-16", "row": 4, "col": 17, "width": 1, "height": 1, "layer": 1, "tv": "N", "response": ["color: rgb(222, 225, 214)"], "stddev": 19.52}, {"id": "2f96f921-5987-4400-971e-18518c658b42", "name": "microcell-4-6", "row": 5, "col": 7, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(101, 102, 115)"], "stddev": 17.54}, {"id": "8f7908a6-7c30-451a-963f-835d84b6e74f", "name": "microcell-4-7", "row": 5, "col": 8, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(81, 100, 117)"], "stddev": 12.28}, {"id": "37a1067a-4b56-4bd4-b323-49b1d8b7cada", "name": "microcell-4-8", "row": 5, "col": 9, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(79, 99, 118)"], "stddev": 10.37}, {"id": "2d892b53-59ef-46eb-b0c8-419ac8139830", "name": "microcell-4-10", "row": 5, "col": 11, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(97, 119, 134)"], "stddev": 15.63}, {"id": "3f8039a2-a6a0-4e4f-bc94-595075116ae9", "name": "microcell-4-11", "row": 5, "col": 12, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(105, 125, 142)"], "stddev": 16.33}, {"id": "1ce7ee92-6fa5-4653-822e-ed1857d1ede6", "name": "microcell-4-12", "row": 5, "col": 13, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(101, 118, 136)"], "stddev": 18.32}, {"id": "8720a4db-dc79-4db5-8be6-8f4dfa9a88a5", "name": "microcell-4-13", "row": 5, "col": 14, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(107, 114, 127)"], "stddev": 11.78}, {"id": "3d9ba929-04e9-41e2-bdd9-d8dd64861955", "name": "microcell-5-6", "row": 6, "col": 7, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(95, 107, 118)"], "stddev": 11.82}, {"id": "226d9f7a-bce7-42ac-a3a1-eac0de55dbef", "name": "microcell-5-12", "row": 6, "col": 13, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(112, 122, 132)"], "stddev": 15.26}, {"id": "72e3668a-e8a0-46c2-8c8f-654338630d41", "name": "microcell-5-13", "row": 6, "col": 14, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(107, 118, 132)"], "stddev": 14.96}, {"id": "a050e7e9-58eb-4073-9121-280a5c447b40", "name": "microcell-5-18", "row": 6, "col": 19, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(245, 161, 144)"], "stddev": 19.75}, {"id": "aa59537b-b377-4475-a80a-5b0e21bbc2f6", "name": "microcell-6-6", "row": 7, "col": 7, "width": 1, "height": 1, "layer": 3, "tv": "N", "response": ["color: rgb(81, 104, 115)"], "stddev": 15.08}, {"id": "3b33aa1a-0575-4d9f-a329-e2dffbdc07bc", "name": "microcell-6-7", "row": 7, "col": 8, "width": 1, "height": 1, "layer": 3, "tv": "N", "response": ["color: rgb(90, 105, 116)"], "stddev": 19.98}, {"id": "14e5cff3-f9df-43f3-8a58-3279f58c247c", "name": "microcell-6-12", "row": 7, "col": 13, "width": 1, "height": 1, "layer": 2, "tv": "N", "response": ["color: rgb(113, 116, 122)"], "stddev": 14.58}, {"id": "b2354c0f-90ca-46c7-ab2a-77321aae2c2f", "name": "microcell-8-9", "row": 9, "col": 10, "width": 1, "height": 1, "layer": 4, "tv": "N", "response": ["color: rgb(101, 111, 122)"], "stddev": 17.8}, {"id": "4b40e1a0-2c18-4a71-91be-9db61e8542d1", "name": "microcell-8-10", "row": 9, "col": 11, "width": 1, "height": 1, "layer": 4, "tv": "N", "response": ["color: rgb(100, 111, 124)"], "stddev": 18.18}];
+    const grid = document.getElementById("grid");
+
+    function renderGrid() {
+      grid.innerHTML = "";
+      const opacity = parseFloat(document.getElementById("opacityControl").value);
+
+      for (const pulse of pulses) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.style.gridColumn = pulse.col;
+        cell.style.gridRow = pulse.row;
+        cell.style.backgroundColor = pulse.response.find(r => r.startsWith("color:"))?.split("color: ")[1] || "#333";
+        cell.style.opacity = opacity;
+
+        const imgData = pulse.response.find(r => r.startsWith("img:"));
+        if (imgData) {
+          const img = document.createElement("img");
+          img.src = imgData.split("img: ")[1];
+          cell.appendChild(img);
+        }
+
+        grid.appendChild(cell);
+      }
+    }
+
+    renderGrid();
+  </script>
+</body>
+</html>

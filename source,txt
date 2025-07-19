@@ -1,0 +1,29 @@
+python generate_pulse_json.py trampic3d.png --block_size 2 --output output.json
+python render_pulse_grid.py output.json --cell_size 2
+  
+ How to Use It for 2×2 Resolution
+Run this command in your terminal:
+
+bash
+Copy
+Edit
+python generate_pulse_json.py trampic3d.png --block_size 2 --output tunnel_microcells_hr_2x2.json
+This will:
+
+Load your trampic3d.png
+
+Segment it into 2×2 pixel blocks
+
+Generate a detailed Pulse JSON with:
+
+Mean color
+
+Gradient 
+
+Texture stddev
+
+Embedded image patch (base64 PNG)
+
+
+  chatg 
+  https://chatgpt.com/c/682a54da-bb68-8008-9f97-d3972d622004
